@@ -47,8 +47,9 @@ tx_pid=$!
 minimodem -c 3 -r $baudrate > $slip_dev &
 rx_pid=$!
 
-sudo ip a a $ip_self peer ${ip_remote}/32 dev sl0
-sudo ip link set up sl0
+link=sl0
+sudo ip a a $ip_self peer ${ip_remote}/32 dev $link
+sudo ip link set up $link
 
 echo "Should be up and running. Press escape key to stop."
 while read -r -n1 key
@@ -58,6 +59,8 @@ do
 	fi
 done
 
+echo "Stopping link $link"
+sudo ip link set down $link
 echo "Stopping slip $slip_pid"
 sudo kill $slip_pid
 echo "Stopping tx modem $tx_pid"
